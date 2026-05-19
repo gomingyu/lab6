@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>春韵数字展销平台</title>
+    <link rel="stylesheet" href="css/lab6-1-005-index.css">
+</head>
+<body>
+    <!-- 登录/注册弹窗 -->
+<div class="modal-overlay" id="loginBox">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h2>欢迎来到春韵图书</h2>
+      <button class="modal-close" onclick="closeLogin()">×</button>
+    </div>
+    <div class="modal-tabs">
+      <button class="tab-btn active" id="loginTab">登录</button>
+      <button class="tab-btn" id="registerTab">注册</button>
+    </div>
+    <!-- 登录表单 -->
+    <div class="form-content" id="loginForm">
+      <div class="form-group">
+        <label for="loginUsername">用户名（手机号/邮箱）</label>
+        <input type="text" id="loginUsername" placeholder="请输入手机号或邮箱">
+      </div>
+      <div class="form-group">
+        <label for="loginPassword">密码</label>
+        <input type="password" id="loginPassword" placeholder="请输入密码">
+      </div>
+      <button class="submit-btn login-btn" id="loginBtn">登录</button>
+      <div class="form-footer">
+        <a href="#" class="forgot-link">忘记密码？</a>
+      </div>
+    </div>
+    <!-- 注册表单 -->
+    <div class="form-content hidden" id="registerForm">
+      <div class="form-group">
+        <label for="regUsername">用户名（手机号/邮箱）</label>
+        <input type="text" id="regUsername" placeholder="请输入手机号或邮箱">
+      </div>
+      <div class="form-group">
+        <label for="regPassword">设置密码</label>
+        <input type="password" id="regPassword" placeholder="请输入6-16位密码" oninput="checkPasswordStrength()">
+        <div id="passwordStrength" class="strength-tip"></div>
+      </div>
+      <div class="form-group">
+        <label for="regConfirmPassword">确认密码</label>
+        <input type="password" id="regConfirmPassword" placeholder="请再次输入密码">
+      </div>
+      <button class="submit-btn register-btn" id="registerBtn">注册</button>
+    </div>
+  </div>
+</div>
+<!-- 我的账户弹窗 -->
+<div class="modal-overlay" id="accountModal">
+  <div class="modal-container" style="width:360px;">
+    <div class="modal-header">
+      <h2>我的账户</h2>
+      <button class="modal-close" onclick="closeAccountModal()">×</button>
+    </div>
+    <div style="padding:24px;">
+      <div style="margin-bottom:20px;font-size:16px;">
+        欢迎回来！<br>
+        <span style="color:#666;font-size:14px;">当前账号：<span id="currentAccount"></span></span>
+      </div>
+      <button onclick="switchAccount()" style="width:100%;padding:10px;margin:5px 0;background:#2e8b57;color:white;border:none;border-radius:4px;cursor:pointer;">切换账号</button>
+      <button onclick="logout()" style="width:100%;padding:10px;margin:5px 0;background:#e54d42;color:white;border:none;border-radius:4px;cursor:pointer;">退出登录</button>
+    </div>
+  </div>
+</div>
+
+<!-- 购物车弹窗 -->
+<div class="modal-overlay" id="cartModal">
+  <div class="modal-container" style="width: 500px;">
+    <div class="modal-header">
+      <h2>🛒 我的购物车</h2>
+      <button class="modal-close" onclick="closeCart()">×</button>
+    </div>
+    <div class="cart-body" id="cartBody" style="padding:24px;min-height:200px;">
+      购物车为空～
+    </div>
+    <div style="padding:0 24px 24px;text-align:right;">
+      <button onclick="closeCart()" style="margin-right:10px;padding:6px 12px;">关闭</button>
+      <button onclick="checkout()" style="padding:6px 12px;background:#2e8b57;color:white;border:none;border-radius:4px;cursor:pointer;">结算</button>
+    </div>
+  </div>
+</div>
+    <div class="fixed-btn">TOP</div>
+    <div class="header">
+        <div class="logo">
+            <img src="img/p8.jpg" alt="春韵展销">
+        </div>
+        <div class="nav">
+            <a href="#">首页</a>
+            <a href="#">图书分类</a>
+            <a href="#">新书推荐</a>
+            <a href="#">优惠活动</a>
+            <a href="#">联系我们</a>
+            <a href="javascript:void(0)" class="login-link">登录</a>
+            <div class="cart">🛒 购物车</div>
+            <!-- 智能搜索框 -->
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="搜索图书...">
+                <select id="searchType">
+                    <option value="name">书名</option>
+                    <option value="author">作者</option>
+                    <option value="category">分类</option>
+                </select>
+                <div id="searchResult" class="search-result"></div>
+            </div>
+        </div>
+    </div>
+<!-- 结算成功弹窗 -->
+<div class="modal-overlay" id="paySuccessModal">
+    <div class="modal-container" style="width:400px;text-align:center;padding:30px;">
+        <img src="img/p17.jpg" style="width:100%;border-radius:8px;">
+        <p style="margin:15px 0;font-size:16px;">下单成功，感谢购买！</p>
+        <button onclick="closePayModal()" style="padding:6px 18px;background:#2e8b57;color:#fff;border:none;border-radius:4px;cursor:pointer;">确定</button>
+    </div>
+</div>
+
+    <div class="container">
+        <div class="left">
+            <h3>图书分类导航</h3>
+            <ul>
+                <li>文学小说</li>
+                <li>经管励志</li>
+                <li>科技计算机</li>
+                <li>教育教辅</li>
+                <li>历史人文</li>
+                <li>艺术设计</li>
+            </ul>
+        </div>
+        <div class="middle">
+            <div class="four-box">
+    <div class="flip-card">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+                <img src="img/p4.jpg" alt="">
+            </div>
+            <div class="flip-card-back">
+                <h4>《人生海海》</h4>
+                <p class="price">¥45.00</p>
+                <p class="rating">★★★★☆</p>
+                <p class="intro">麦家高分代表作</p>
+                <button class="add-cart-btn">🛒 加入购物车</button>
+            </div>
+        </div>
+    </div>
+    <div class="flip-card">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+                <img src="img/p5.jpg" alt="">
+            </div>
+            <div class="flip-card-back">
+                <h4>《朝花夕拾》</h4>
+                <p class="price">¥32.00</p>
+                <p class="rating">★★★★★</p>
+                <p class="intro">鲁迅经典散文集</p>
+                <button class="add-cart-btn">🛒 加入购物车</button>
+            </div>
+        </div>
+    </div>
+    <div class="flip-card">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+                <img src="img/p6.jpg" alt="">
+            </div>
+            <div class="flip-card-back">
+                <h4>《追风筝的人》</h4>
+                <p class="price">¥38.00</p>
+                <p class="rating">★★★★☆</p>
+                <p class="intro">关于救赎与勇气</p>
+                <button class="add-cart-btn">🛒 加入购物车</button>
+            </div>
+        </div>
+    </div>
+    <div class="flip-card">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+                <img src="img/p7.jpg" alt="">
+            </div>
+            <div class="flip-card-back">
+                <h4>《百年孤独》</h4>
+                <p class="price">¥58.00</p>
+                <p class="rating">★★★★★</p>
+                <p>马尔克斯传世巨著</p>
+                <button class="add-cart-btn">🛒 加入购物车</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+            <div class="section-title">🔥 热门推荐</div>
+            <div class="carousel-3d-container">
+                <div class="carousel-3d">
+                    <div class="carousel-3d-item"><img src="img/p1.jpg" alt=""></div>
+                    <div class="carousel-3d-item"><img src="img/p2.jpg" alt=""></div>
+                    <div class="carousel-3d-item"><img src="img/p3.jpg" alt=""></div>
+                    <div class="carousel-3d-item"><img src="img/p15.jpg" alt=""></div>
+                    <div class="carousel-3d-item"><img src="img/p16.jpg" alt=""></div>
+                </div>
+            </div>
+
+            <div class="section-title">📚 新书上市</div>
+            <div class="new-book">
+                <table>
+                    <tr><th>书名</th><th>作者</th><th>价格</th></tr>
+                    <tr><td>残月记</td><td>李凤群</td><td>58.00</td></tr>
+                    <tr><td>白魔鬼的女儿们</td><td>雅阿·吉亚西</td><td>68.00</td></tr>
+                    <tr><td>故都的秋</td><td>郁达夫</td><td>49.00</td></tr>
+                </table>
+            </div>
+
+            <div class="section-title">🎠 图书轮播</div>
+            <div class="carousel-box">
+                <div class="carousel-wrap">
+                    <img src="img/p9.jpg.png" alt="">
+                    <img src="img/p10.jpg.png" alt="">
+                    <img src="img/p11.jpg.png" alt="">
+                    <img src="img/p12.jpg.png" alt="">
+                    <img src="img/p13.jpg.png" alt="">
+                    <img src="img/p14.jpg.png" alt="">
+                </div>
+            </div>
+        </div>
+        <div class="right">
+            <div class="sale-tag">限时特惠</div>
+            <h3>促销活动专区</h3>
+            <div class="hide-demo">
+                <p class="hide-box">鼠标悬停查看隐藏福利</p>
+                <p class="show-tip">全场满99减30！</p>
+            </div>
+            <ul style="margin-top:20px;line-height:2.2;list-style:none;">
+                <li>新人专享5元券</li>
+                <li>满200减50</li>
+                <li>会员折扣专区</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="social-icons">
+            <span class="social-icon">📘</span>
+            <span class="social-icon">🐦</span>
+            <span class="social-icon">📷</span>
+        </div>
+        <p class="copyright">春韵数字展销平台 版权所有 © 2026</p>
+    </div>
+
+    <script src="js/lab6-1-005-index.js"></script>
+</body>
+</html>
